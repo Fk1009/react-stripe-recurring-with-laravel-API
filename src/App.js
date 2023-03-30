@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import { Routes, Route } from "react-router-dom";
 import Protected from './components/Protected';
 import Checkout from './components/Checkout';
+import Profile from './components/Profile';
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <Routes>
           <Route path="/dashboard" element={ <Protected cmp = {Dashboard} /> } />
           <Route path="/checkout/:plan_id" element={ <Protected cmp = {Checkout} /> } />
+          <Route path="/profile" element={ <Protected cmp = {Profile} /> } />
            <Route path="/" element={ <LoginForm/> } />
            <Route path="/register" element={ <SignupForm/> } />
       </Routes>

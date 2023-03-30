@@ -38,8 +38,9 @@ function NavBar() {
                 localStorage.getItem('user-info') ?
           <Nav>
           <NavDropdown title={user && user.name} id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
-              <NavDropdown.Item >Profile</NavDropdown.Item>
+          <NavDropdown.Item ><Link to="/profile">Profile</Link></NavDropdown.Item>
+          <NavDropdown.Item ><Link to="/dashboard">Dashboard</Link></NavDropdown.Item>
+          <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
             </NavDropdown>
           </Nav>
           : null }

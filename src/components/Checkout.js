@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 import { useParams } from "react-router";
 
+
 const validateCheckoutCard = (userData) => {
   const errors = {};
   if (!userData.card_number) {
@@ -38,8 +39,8 @@ const validateCheckoutCard = (userData) => {
     errors.exp_year = "Invalid Expiry Year";
   }
 
-  if (!userData.cvv) {
-    errors.cvv = "Please Enter Your CVV";
+  if (!userData.cvc) {
+    errors.cvc = "Please Enter Your CVV";
   } 
 
   return errors;
@@ -47,6 +48,7 @@ const validateCheckoutCard = (userData) => {
 
 const Checkout = () => {
     let [singlePlan,setSinglePlan] = useState([]);
+    const [product, setProduct] = useState({});
     let user = JSON.parse(localStorage.getItem('user-info'));
     const token = user.token;
     let { plan_id } = useParams();
@@ -60,7 +62,6 @@ const Checkout = () => {
 	},[])
    
 
-    
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -68,20 +69,37 @@ const Checkout = () => {
       card_number: "",
       exp_month: "",
       exp_year: "",
-      cvv: "",
+      cvc: "",
     },
 
     validate: validateCheckoutCard,
     onSubmit: (values) => {
-        console.log(values);return false;
+      let params = {
+        ...values,
+        plan_id: plan_id
+      }
       axios
-        .post("http://localhost:8000/api/login", values)
+        .post("http://localhost:8000/api/subscribe", params,{ headers: {"Authorization" : `Bearer ${token}`} })
         .then((response) => {
-          if (response.status == 200) {
-            toast.success("User Loggedin Successfully !", {
+          console.log('here', response.data);
+          if (response.data.message == 'Subscription Added Successfully!!!') {
+            toast.success("you subscribed for this plan Successfully !", {
               position: toast.POSITION.TOP_RIGHT,
             });
-            localStorage.setItem("user-info", JSON.stringify(response.data));
+            // setTimeout(() => {
+            //   navigate("/dashboard");
+            // }, 2000);
+          }else if(response.data.message == 'This Plan is Already Active for you!'){
+            toast.error("This Plan is Already Active for you!", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+            // setTimeout(() => {
+            //   navigate("/dashboard");
+            // }, 2000);
+          }else if(response.data.message == 'Subscription Updated Successfully!!!'){
+            toast.success("Subscription Updated Successfully!!!", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
             setTimeout(() => {
               navigate("/dashboard");
             }, 2000);
@@ -89,6 +107,9 @@ const Checkout = () => {
             toast.error("Please check Again!", {
               position: toast.POSITION.TOP_RIGHT,
             });
+            setTimeout(() => {
+              navigate("/dashboard");
+            }, 2000);
           }
         })
         .catch((response) => {
@@ -187,17 +208,17 @@ const Checkout = () => {
                     ) : null}
                   </Form.Group>
 
-                  <Form.Group className="mb-3" controlId="formBasicCvv">
+                  <Form.Group className="mb-3" controlId="formBasicCvc">
                     <Form.Control
                       type="number"
-                      name="cvv"
-                      placeholder="cvv"
-                      value={formik.values.cvv}
+                      name="cvc"
+                      placeholder="cvc"
+                      value={formik.values.cvc}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
-                    {formik.touched.cvv && formik.errors.cvv ? (
-                      <span style={{ color: "red" }}>{formik.errors.cvv}</span>
+                    {formik.touched.cvc && formik.errors.cvc ? (
+                      <span style={{ color: "red" }}>{formik.errors.cvc}</span>
                     ) : null}
                   </Form.Group>
 
