@@ -6,20 +6,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from './NavBar';
 import { useNavigate } from 'react-router-dom';
+import { LOGIN_API,EMAIL_REQ,EMAIL_INVALID,PASS_REQ,PASS_INVALID,LOGIN_SUCCESS,TRY_AGAIN } from '../Constants';
 
 
 const validateLoginUser = userData => {
     const errors = {};
     if (!userData.email) {
-      errors.email = 'Please Enter Your Email';
+      errors.email = EMAIL_REQ;
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(userData.email)) {
-      errors.email = 'Invalid email address';
+      errors.email = EMAIL_INVALID;
     }
   
     if (!userData.password) {
-      errors.password = 'Please Enter Your password';
+      errors.password = PASS_REQ;
     } else if (!/^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/i.test(userData.password)) {
-      errors.password = 'Invalid Password,8 characters length, 2 letters in Upper Case,1 Special Character (!@#$&*),2 numerals (0-9),3 letters in Lower Case';
+      errors.password = PASS_INVALID;
     }
     return errors;
   };
@@ -43,9 +44,9 @@ const LoginForm = () => {
       validate:validateLoginUser,
       onSubmit:(values)=>{
         
-      axios.post('http://localhost:8000/api/login',values).then(response =>{
+      axios.post(LOGIN_API,values).then(response =>{
         if (response.status == 200) {
-          toast.success("User Loggedin Successfully !", {
+          toast.success(LOGIN_SUCCESS, {
             position: toast.POSITION.TOP_RIGHT
           });
         localStorage.setItem('user-info',JSON.stringify(response.data));
@@ -54,12 +55,12 @@ const LoginForm = () => {
           }, 2000);
        
         }else{
-          toast.error("Please check Again!", {
+          toast.error(TRY_AGAIN, {
             position: toast.POSITION.TOP_RIGHT
           });
         }
     }).catch((response) => {
-      toast.error("Please check Again!", {
+      toast.error(TRY_AGAIN, {
         position: toast.POSITION.TOP_RIGHT
       });
   })

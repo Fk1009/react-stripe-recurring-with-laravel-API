@@ -6,24 +6,25 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavBar from './NavBar';
 import { useNavigate } from 'react-router-dom';
+import { NAME_REQ,MAX_LENGTH,EMAIL_REQ,EMAIL_INVALID,PASS_INVALID,PASS_REQ,REGISTER_API,REGISTER_SUCCESS, TRY_AGAIN } from '../Constants';
 
 const validateUser = userData => {
   const errors = {};
   if (!userData.name) {
-    errors.name = 'Please Enter Your Name';
+    errors.name = NAME_REQ;
   } else if (userData.name.length > 20) {
-    errors.Name = 'Name cannot exceed 20 characters';
+    errors.Name = MAX_LENGTH;
   }
   if (!userData.email) {
-    errors.email = 'Please Enter Your Email';
+    errors.email = EMAIL_REQ;
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(userData.email)) {
-    errors.email = 'Invalid email address';
+    errors.email = EMAIL_INVALID;
   }
 
   if (!userData.password) {
-    errors.password = 'Please Enter Your Password';
+    errors.password = PASS_REQ;
   } else if (!/^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/i.test(userData.password)) {
-    errors.password = 'Invalid Password,8 characters length, 2 letters in Upper Case,1 Special Character (!@#$&*),2 numerals (0-9),3 letters in Lower Case';
+    errors.password = PASS_INVALID;
   }
   return errors;
 };
@@ -48,20 +49,20 @@ useEffect(()=>{
   
     validate:validateUser,
     onSubmit:(values)=>{
-    axios.post('http://localhost:8000/api/register',values).then(response =>{
+    axios.post(REGISTER_API,values).then(response =>{
       if (response.status == 201) {
-        toast.success("User Registered Successfully !", {
+        toast.success(REGISTER_SUCCESS, {
           position: toast.POSITION.TOP_RIGHT
         });
         localStorage.setItem('user-info',JSON.stringify(response.data));
         navigate('/dashboard');
       }else{
-        toast.error("Please check Again!", {
+        toast.error(TRY_AGAIN, {
           position: toast.POSITION.TOP_RIGHT
         });
       }
   }).catch((response) => {
-    toast.error("Please check Again!", {
+    toast.error(TRY_AGAIN, {
       position: toast.POSITION.TOP_RIGHT
     });
 })

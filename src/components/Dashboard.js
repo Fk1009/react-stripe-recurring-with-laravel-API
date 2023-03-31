@@ -3,14 +3,14 @@ import './Dashboard.css';
 import Plans from "./Plans";
 import axios from "axios";
 import {useState ,useEffect} from "react";
+import { PLANS_API } from "../Constants";
 
 const Dashboard = () => {
     let [plans,setPlans] = useState([]);
     let user = JSON.parse(localStorage.getItem('user-info'));
     const token = user.token;
-	let allPlansApi = "http://localhost:8000/api/plans";
 	useEffect(()=>{
-	    axios.get('http://localhost:8000/api/plans',{ headers: {"Authorization" : `Bearer ${token}`} }).then(response =>{
+	    axios.get(PLANS_API,{ headers: {"Authorization" : `Bearer ${token}`} }).then(response =>{
 					setPlans(response.data.data);
     }).catch((error) => {
         console.log("Error from all Plans API",error)

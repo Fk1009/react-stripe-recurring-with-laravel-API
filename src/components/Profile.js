@@ -3,7 +3,8 @@ import { Col, Button, Row, Container, Card, Form, Badge } from "react-bootstrap"
 import Table from "react-bootstrap/Table";
 import axios from "axios";
 import NavBar from "./NavBar";
-import { useNavigate } from "react-router-dom";
+import { USER_PROFILE_API } from "../Constants";
+
 
 
 const Profile = () => {
@@ -11,7 +12,7 @@ const Profile = () => {
     let user = JSON.parse(localStorage.getItem('user-info'));
     const token = user.token;
     useEffect(()=>{
-	    axios.get('http://localhost:8000/api/subscribe',{ headers: {"Authorization" : `Bearer ${token}`} }).then(response =>{
+	    axios.get(USER_PROFILE_API,{ headers: {"Authorization" : `Bearer ${token}`} }).then(response =>{
         setUserDetails(response.data);
         console.log(response);
     }).catch((error) => {

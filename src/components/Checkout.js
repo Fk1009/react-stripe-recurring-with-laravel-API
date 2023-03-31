@@ -8,39 +8,40 @@ import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 import { useParams } from "react-router";
+import { CARD_CVV_REQ, CARD_INVALID, CARD_MONTH_INVALID, CARD_MONTH_REQ, CARD_NUMBER_REQ, CARD_YEAR_INVALID, CARD_YEAR_REQ, PLANS_API, SINGLE_PLAN_API, SUBSCRIPTION_ADD_SUCCESS, SUBSCRIPTION_ALREADY_ACTIVE, SUBSCRIPTION_API, SUBSCRIPTION_SUCCESS, SUBSCRIPTION_UPDATE_SUCCESS, TRY_AGAIN } from "../Constants";
 
 
 const validateCheckoutCard = (userData) => {
   const errors = {};
   if (!userData.card_number) {
-    errors.card_number = "Please Enter Your Card Number";
+    errors.card_number = CARD_NUMBER_REQ;
   } else if (
     !/^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/i.test(userData.card_number)
   ) {
-    errors.card_number = "Invalid Card Details";
+    errors.card_number = CARD_INVALID;
   }
 
   if (!userData.exp_month) {
-    errors.exp_month = "Please Enter Your Card Expiry Month";
+    errors.exp_month = CARD_MONTH_REQ;
   } else if (
     !/^(0?[1-9]|1[012])$/i.test(
       userData.exp_month
     )
   ) {
     errors.exp_month =
-      "Invalid Expiry Month";
+      CARD_MONTH_INVALID;
   }
 
   if (!userData.exp_year) {
-    errors.exp_year = "Please Enter Your Card Expiry Year";
+    errors.exp_year = CARD_YEAR_REQ;
   } else if (
     !/^20(1[1-9]|[2-9][0-9])$/i.test(userData.exp_year)
   ) {
-    errors.exp_year = "Invalid Expiry Year";
+    errors.exp_year = CARD_YEAR_INVALID;
   }
 
   if (!userData.cvc) {
-    errors.cvc = "Please Enter Your CVV";
+    errors.cvc = CARD_CVV_REQ;
   } 
 
   return errors;
@@ -54,7 +55,7 @@ const Checkout = () => {
     let { plan_id } = useParams();
 
     useEffect(()=>{
-	    axios.get('http://localhost:8000/api/plans'+'/'+ plan_id,{ headers: {"Authorization" : `Bearer ${token}`} }).then(response =>{
+	    axios.get(SINGLE_PLAN_API+'/'+ plan_id,{ headers: {"Authorization" : `Bearer ${token}`} }).then(response =>{
             setSinglePlan(response.data);
     }).catch((error) => {
         console.log("Error from all Plans API",error)
@@ -79,32 +80,32 @@ const Checkout = () => {
         plan_id: plan_id
       }
       axios
-        .post("http://localhost:8000/api/subscribe", params,{ headers: {"Authorization" : `Bearer ${token}`} })
+        .post(SUBSCRIPTION_API, params,{ headers: {"Authorization" : `Bearer ${token}`} })
         .then((response) => {
           console.log('here', response.data);
-          if (response.data.message == 'Subscription Added Successfully!!!') {
-            toast.success("you subscribed for this plan Successfully !", {
+          if (response.data.message == SUBSCRIPTION_ADD_SUCCESS) {
+            toast.success(SUBSCRIPTION_ADD_SUCCESS, {
               position: toast.POSITION.TOP_RIGHT,
             });
             // setTimeout(() => {
             //   navigate("/dashboard");
             // }, 2000);
-          }else if(response.data.message == 'This Plan is Already Active for you!'){
-            toast.error("This Plan is Already Active for you!", {
+          }else if(response.data.message == SUBSCRIPTION_ALREADY_ACTIVE){
+            toast.error(SUBSCRIPTION_ALREADY_ACTIVE, {
               position: toast.POSITION.TOP_RIGHT,
             });
             // setTimeout(() => {
             //   navigate("/dashboard");
             // }, 2000);
-          }else if(response.data.message == 'Subscription Updated Successfully!!!'){
-            toast.success("Subscription Updated Successfully!!!", {
+          }else if(response.data.message == SUBSCRIPTION_UPDATE_SUCCESS){
+            toast.success(SUBSCRIPTION_UPDATE_SUCCESS, {
               position: toast.POSITION.TOP_RIGHT,
             });
             setTimeout(() => {
               navigate("/dashboard");
             }, 2000);
           } else {
-            toast.error("Please check Again!", {
+            toast.error(TRY_AGAIN, {
               position: toast.POSITION.TOP_RIGHT,
             });
             setTimeout(() => {
@@ -113,7 +114,7 @@ const Checkout = () => {
           }
         })
         .catch((response) => {
-          toast.error("Please check Again!", {
+          toast.error(TRY_AGAIN, {
             position: toast.POSITION.TOP_RIGHT,
           });
         });
